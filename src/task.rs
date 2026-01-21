@@ -7,12 +7,16 @@ pub enum InstType {
 
 pub struct Inst {
     pub instruction: InstType,
-    pub address: u64   
+    pub address: u64
 }
 
 pub struct Task {
     pub id: String,
-    pub duration: u64,
-    pub submit_time : u64,
-    pub instructions : Vec<Inst>
+
+    pub ops_count: u64,
+    pub mem_percent: f32,
+    pub alu_percent: f32,
+    pub flu_percent: f32,
+
+    pub next: Option<Box<Task>>,
 }

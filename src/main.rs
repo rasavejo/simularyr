@@ -7,9 +7,23 @@ use crate::sched::schedule;
 
 
 fn main() {
-    let mut tasks: Vec<Task> = Vec::new();
-    tasks.push(Task{instructions:vec![Inst{instruction:InstType::ADD,address:0}],id:"t1".to_string(),duration:1,submit_time:1});
-    tasks.push(Task{instructions:vec![Inst{instruction:InstType::LDR,address:0x4000}],id:"t2".to_string(),duration:1,submit_time:1});
 
-    schedule(tasks);
+    let task2 = Task{
+        id : "t2".to_string(),
+        ops_count: 1000,
+        mem_percent: 0.,
+        alu_percent: 1.,
+        flu_percent: 0.,
+        next: None
+    };
+
+    let task1 = Task{
+        id : "t1".to_string(),
+        ops_count: 1000,
+        mem_percent: 0.,
+        alu_percent: 1.,
+        flu_percent: 0.,
+        next: Some(Box::new(task2))
+    };
+
 }
