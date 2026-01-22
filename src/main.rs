@@ -3,27 +3,30 @@ mod sched;
 mod machine;
 
 use crate::task::*;
-use crate::sched::schedule;
-
-
+use crate::sched::Sched;
 fn main() {
 
+    let cpu = Cpu::new(); // not done
+    let sched = Sched::new(cpu);
+
     let task2 = Task{
-        id : "t2".to_string(),
+        id : "t2",
         ops_count: 1000,
         mem_percent: 0.,
         alu_percent: 1.,
         flu_percent: 0.,
-        next: None
+
     };
 
     let task1 = Task{
-        id : "t1".to_string(),
+        id : "t1",
         ops_count: 1000,
         mem_percent: 0.,
         alu_percent: 1.,
         flu_percent: 0.,
-        next: Some(Box::new(task2))
     };
-
+    let tasks : Vec<Task> = vec![task1,task2];
+    
+    sched.schedule(tasks);
+    
 }

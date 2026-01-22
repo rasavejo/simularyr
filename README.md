@@ -2,7 +2,7 @@
 The `machine` and all its components are *stateless*, they are only used as data holding structures.
 E.G. : The `ALU` components describes the ALU speed and width (more to come)
 
-Each component has a `run_tasks` method, which gets called recursively from the machine to the subcomponents.
+Each component has a `run_tasks` method, which gets called from the machine to the subcomponents.
 this method returns the state of the machine (purely for tracing purposes, not used) until the next event, and the time until that event
 
 schedules goes from event to event until there are no more tasks
