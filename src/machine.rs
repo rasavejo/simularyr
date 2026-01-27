@@ -1,33 +1,56 @@
 use crate::task::*;
 
-mod cpu;
-mod mem;
 
-use crate::machine::cpu::cpu_update;
-use crate::machine::cpu::add_cpu_tasks;
-use crate::machine::mem::mem_update;
-use crate::machine::mem::add_mem_tasks;
 
-let queue : Vec<Task> = Vec::new();
-//TODO : Faire une globale idiomatique au rust
-//Globale obligatoire quoiqu'il arrive parce qu'il faut qu'à chaque appel de la fonction la fonction se rappelle où elle en est de l'execution
+// purely description
+pub struct Cpu<'a> {
+    pub id: &'a str,
 
-fn add_tasks(new_tasks:Vec<Task>) {
-    queue.append(new_tasks);
+    pub alu: Alu,
+    // pub fpu: Fpu,
+    pub mem: Mem,
 }
 
-fn update(mut finished_tasks:Vec<Task>,time:u64) {
-    let mut updated_tasks: Vec<Task> = Vec::new();
-    cpu_update(updated_tasks,time);
-    mem_update(updated_tasks, time);
-    updated_tasks.append(queue);
-    queue.clear();
-    for t in updated_tasks {
-        if t.instructions.is_empty() {
-            finished_tasks.push(t);
+impl Cpu<'_> {
+    pub fn run_task(&self, task:Task) -> u32 {
+        let time_alu = self.alu.run_task(task);
+        let time_mem = self.mem.run_task(task);
 
+        if time_mem > time_alu {
+            time_mem
+        } else {
+            time_alu
         }
-            // TODO : Switch qui teste la prochaine instruction et appelle cpu ou mem selon
     }
+}
 
+pub struct Alu {
+    pub ops_per_cycle : u32,
+    pub concurrent_ops : u32,
+}
+
+impl Alu {
+    fn run_task(&self, task:Task) -> u32 {
+        if task.alu_count == 0 {return 0}
+        let nb_op = task.alu_count;
+        let time_until_end = nb_op as u32 / self.ops_per_cycle;
+        time_until_end
+    }
+}
+
+struct Fpu {
+
+}
+
+pub struct Mem {
+    pub access_duration : u32,
+}
+
+impl Mem {
+    fn run_task(&self, task:Task) -> u32 {
+        if task.mem_count == 0 {return 0}
+        let nb_op = task.mem_count;
+        let time_until_end = nb_op as u32 / self.access_duration;
+        time_until_end + 1    // Durée dans le bus, à préciser
+    }
 }

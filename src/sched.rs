@@ -1,20 +1,24 @@
 use crate::task::*;
-use crate::machine::update;
+use crate::machine::Cpu;
 
-pub fn schedule(mut tasks:Vec<Task>) {
-    let mut time = 0;
-    while !tasks.is_empty() {
-        for t in tasks {
-            // TODO : implémenter une méthode simple de scheduling
-            // add_task(task choisis)
-        }
 
-        let mut finished_tasks: Vec<Task> = Vec::new();
-        update(finished_tasks,time);
+pub struct Sched<'a> {
+    cpu :Cpu<'a>,
+}
 
-        for v in finished_tasks {
-            tasks.retain(|&x| x.id != v.id);   //supprime les éléments en double
-        }
-        time = time+1;
+
+impl Sched<'_> {
+
+    pub fn new(cpu: Cpu) -> Sched {
+        Sched { cpu }
     }
+
+    pub fn schedule(&self,tasks:Vec<Task>) -> u32 {
+        let mut time = 0;
+        for task in tasks {
+            time += self.cpu.run_task(task);
+        }
+        time
+    }
+
 }
