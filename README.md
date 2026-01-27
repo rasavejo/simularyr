@@ -9,6 +9,7 @@ schedules goes from event to event until there are no more tasks
 
 # Problems
 ## Cache
+- Instruction cache may not be that important for now, as most testing programs will not be able to overload it (so it is only relevant on context switches)
 ## Temperature
 - Not important, cloud centers are *very* well cooled
 ## "Remaining" time on tasks
