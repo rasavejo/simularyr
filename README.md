@@ -9,7 +9,9 @@ schedules goes from event to event until there are no more tasks
 
 # Problems
 ## Cache
+
 ## Temperature
+
 ## "Remaining" time on tasks
 - when two tasks are launched and the first one finishes, how long remains on the first one
 - could read the state on `run_tasks` and update the actual tasks (from main/schedule, aka persistent state)

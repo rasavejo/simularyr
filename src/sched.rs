@@ -2,12 +2,12 @@ use crate::task::*;
 use crate::machine::Cpu;
 
 
-pub struct Sched {
-    cpu :Cpu,
+pub struct Sched<'a> {
+    cpu :Cpu<'a>,
 }
 
 
-impl Sched {
+impl Sched<'_> {
 
     pub fn new(cpu: Cpu) -> Sched {
         Sched { cpu }

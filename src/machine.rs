@@ -3,19 +3,18 @@ use crate::task::*;
 
 
 // purely description
-pub struct Cpu {
-    id: String,
+pub struct Cpu<'a> {
+    pub id: &'a str,
 
-    alu: Alu,
-    fpu: Fpu,
-    mem: Mem,
+    pub alu: Alu,
+    // pub fpu: Fpu,
+    pub mem: Mem,
 }
 
-impl Cpu {
+impl Cpu<'_> {
     pub fn run_task(&self, task:Task) -> u32 {
         let time_alu = self.alu.run_task(task);
         let time_mem = self.mem.run_task(task);
-
 
         if time_mem > time_alu {
             time_mem
@@ -25,14 +24,15 @@ impl Cpu {
     }
 }
 
-struct Alu {
-    ops_per_cycle : u32,
-    concurrent_ops : u32,
+pub struct Alu {
+    pub ops_per_cycle : u32,
+    pub concurrent_ops : u32,
 }
 
 impl Alu {
     fn run_task(&self, task:Task) -> u32 {
-        let nb_op = (task.ops_count as f32) / task.alu_percent; 
+        if task.alu_count == 0 {return 0}
+        let nb_op = task.alu_count;
         let time_until_end = nb_op as u32 / self.ops_per_cycle;
         time_until_end
     }
@@ -42,13 +42,14 @@ struct Fpu {
 
 }
 
-struct Mem {
-    access_duration : u32,
+pub struct Mem {
+    pub access_duration : u32,
 }
 
 impl Mem {
     fn run_task(&self, task:Task) -> u32 {
-        let nb_op = (task.ops_count as f32) / task.mem_percent; 
+        if task.mem_count == 0 {return 0}
+        let nb_op = task.mem_count;
         let time_until_end = nb_op as u32 / self.access_duration;
         time_until_end + 1    // Durée dans le bus, à préciser
     }

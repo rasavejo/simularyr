@@ -1,32 +1,38 @@
 mod task;
 mod sched;
 mod machine;
+mod dag;
 
 use crate::task::*;
 use crate::sched::Sched;
+use crate::machine::*;
+// use crate::dag::*;
 fn main() {
 
-    let cpu = Cpu::new(); // not done
+    let cpu = Cpu {
+        id: "1",
+        alu: Alu{ ops_per_cycle: 1, concurrent_ops : 1},
+        mem: Mem{ access_duration : 1 }
+    };
     let sched = Sched::new(cpu);
 
     let task2 = Task{
         id : "t2",
-        ops_count: 1000,
-        mem_percent: 0.,
-        alu_percent: 1.,
-        flu_percent: 0.,
+        mem_count : 1000,
+        alu_count : 1000,
+        fpu_count : 0
 
     };
-
     let task1 = Task{
         id : "t1",
-        ops_count: 1000,
-        mem_percent: 0.,
-        alu_percent: 1.,
-        flu_percent: 0.,
+        mem_count : 1000,
+        alu_count : 1000,
+        fpu_count : 0
+
     };
+
     let tasks : Vec<Task> = vec![task1,task2];
-    
-    sched.schedule(tasks);
-    
+
+    println!("{:?}",sched.schedule(tasks));
+
 }
