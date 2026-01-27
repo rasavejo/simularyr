@@ -11,10 +11,10 @@ fn main() {
 
     let cpu = Cpu {
         id: "1",
-        alu: Alu{ ops_per_cycle: 1, concurrent_ops : 1},
+        alu: Alu{ ops_per_cycle: 1, nb_of_alu : 1},
         mem: Mem{ access_duration : 1 }
     };
-    let sched = Sched::new(cpu);
+    let sched = Sched::new(vec![cpu]);
 
     let task2 = Task{
         id : "t2",

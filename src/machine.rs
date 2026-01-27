@@ -26,14 +26,14 @@ impl Cpu<'_> {
 
 pub struct Alu {
     pub ops_per_cycle : u32,
-    pub concurrent_ops : u32,
+    pub nb_of_alu : u32,
 }
 
 impl Alu {
     fn run_task(&self, task:Task) -> u32 {
         if task.alu_count == 0 {return 0}
         let nb_op = task.alu_count;
-        let time_until_end = nb_op as u32 / self.ops_per_cycle;
+        let time_until_end = (nb_op as u32 / self.nb_of_alu) / self.ops_per_cycle;
         time_until_end
     }
 }
