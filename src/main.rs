@@ -14,7 +14,14 @@ fn main() {
         alu: Alu{ ops_per_cycle: 1, nb_of_alu : 1},
         mem: Mem{ access_duration : 1 }
     };
-    let sched = Sched::new(vec![cpu]);
+
+    let cpu2 = Cpu {
+        id: "1",
+        alu: Alu{ ops_per_cycle: 1, nb_of_alu : 1},
+        mem: Mem{ access_duration : 1 }
+    };
+
+    let sched = Sched::new(vec![cpu,cpu2]);
 
     let task2 = Task{
         id : "t2",

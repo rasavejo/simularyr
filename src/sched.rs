@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::u32::{MAX, MIN};
 
 use crate::task::*;
 use crate::machine::Cpu;
@@ -17,13 +18,13 @@ impl Sched<'_> {
 
 
     // Return the closest free cpu, like (cpu index in the cpus array,date when free) 
-    pub fn next_free_cpu(map:&HashMap<usize,u32>) -> (usize,u32){
-        let mut mini: u32 = 0;
+    pub fn next_free_cpu(vec:&Vec<u32>) -> (usize,u32){
+        let mut mini: u32 = MAX;
         let mut index: usize = 0;
-        for (k,v) in map {
-            if *v < mini {
-                index = *k;
-                mini = *v;
+        for i in 0..vec.len() {
+            if vec[i] < mini {
+                index = i;
+                mini = vec[i];
             }
         }
         (index,mini)
@@ -32,9 +33,9 @@ impl Sched<'_> {
     pub fn schedule(&self,tasks:Vec<Task>) -> u32 {
         let mut time = 0;
 
-        let mut time_until_next: HashMap<usize, u32> = HashMap::new();
-        for i in 0..self.cpus.len() {
-            time_until_next.insert(i,0);
+        let mut time_until_next: Vec<u32> = Vec::new();
+        for _i in 0..self.cpus.len() {
+            time_until_next.push(0);
         }
 
 
@@ -44,11 +45,9 @@ impl Sched<'_> {
 
             if next_date != time  {
                 time = next_date;
-            } else {
-                let cpu = time_until_next.entry(next_cpu).or_default();
-                *cpu += self.cpus[next_cpu].run_task(task);
             }
+            time_until_next[next_cpu] += self.cpus[next_cpu].run_task(task);
         }
-        *time_until_next.values().max().unwrap()
+        *time_until_next.iter().max().unwrap()
     }
 }
