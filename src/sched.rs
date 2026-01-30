@@ -30,7 +30,7 @@ impl Sched<'_> {
         (index,mini)
     }
 
-    pub fn schedule(&self,tasks:Vec<Task>) -> u32 {
+    pub fn schedule(&mut self,tasks:Vec<Task>) -> u32 {
         let mut time = 0;
 
         let mut time_until_next: Vec<u32> = Vec::new();
@@ -46,7 +46,7 @@ impl Sched<'_> {
             if next_date != time  {
                 time = next_date;
             }
-            time_until_next[next_cpu] += self.cpus[next_cpu].run_task(task);
+            time_until_next[next_cpu] += self.cpus[next_cpu].run_task(task,time);
         }
         *time_until_next.iter().max().unwrap()
     }

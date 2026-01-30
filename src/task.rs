@@ -2,7 +2,9 @@
 pub struct Task<'a> {
     pub id : &'a str,
 
-    pub mem_count: u64,
-    pub alu_count: u64,
-    pub fpu_count: u64,
+    pub mem_count: u32,
+    pub alu_count: u32,
+    pub fpu_count: u32,
+
+    pub cache_miss: f32,
 }
