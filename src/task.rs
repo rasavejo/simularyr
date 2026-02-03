@@ -7,4 +7,6 @@ pub struct Task<'a> {
     pub fpu_count: u32,
 
     pub cache_miss: f32,
+    pub l1_cache_miss: f32,
+    pub l2_cache_miss: f32
 }
