@@ -1,8 +1,9 @@
 use std::{cell::RefCell, cmp::max};
 
 use crate::task::*;
+use serde::*;
 
-// purely description
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Cpu<'a> {
     pub id: &'a str,
 
@@ -10,6 +11,13 @@ pub struct Cpu<'a> {
     pub fpu: Fpu,
     pub cache : Cache<'a>,
     pub ram : &'a RefCell<Ram>
+=======
+    // pub fpu: Fpu,
+    pub cache : Cache,
+
+    #[serde(skip_deserializing)]
+    pub ram : Option<&'a RefCell<Ram>>
+>>>>>>> d7001f5 (v0 serde machine spec)
 }
 
 impl Cpu<'_> {
@@ -20,19 +28,24 @@ impl Cpu<'_> {
         max(max(time_alu,time_mem),time_fpu)
     }
 
-
     fn mem_access(&mut self, task:Task,time: u32) -> u32 {
         if task.mem_count == 0 {return 0}
         let mut total_time:u32 = 0;
         let nb_miss = (task.mem_count as f32 * task.cache_miss) as u32;
+<<<<<<< HEAD
         total_time += self.cache.access_cache(task.mem_count-nb_miss,task.l1_cache_miss,task.l2_cache_miss,time);
         total_time += self.ram.borrow_mut().access_ram(nb_miss,time);
+=======
+        total_time += self.cache.access_cache(task.mem_count-nb_miss);
+        total_time += self.ram.unwrap().borrow_mut().access_ram(nb_miss,time);
+>>>>>>> d7001f5 (v0 serde machine spec)
         total_time
     }
 
 
 }
 
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Alu {
     pub ops_per_cycle : u32,
     pub nb_of_alu : u32,
@@ -52,6 +65,7 @@ pub struct Fpu {
     pub nb_of_fpu : u32,
 }
 
+<<<<<<< HEAD
 impl Fpu {
     fn run_task(&self, task:Task) -> u32 {
         if task.fpu_count == 0 {return 0}
@@ -59,6 +73,11 @@ impl Fpu {
         let time_until_end = (nb_op as u32 / self.nb_of_fpu) * self.op_duration;
         time_until_end
     }
+=======
+#[derive(Serialize, Deserialize, Debug)]
+pub struct Cache {
+    pub cache_access_duration : u32,
+>>>>>>> d7001f5 (v0 serde machine spec)
 }
 
 
@@ -108,6 +127,7 @@ impl Cache<'_> {
 }
 
 
+#[derive(Serialize, Deserialize, Debug)]
 pub struct Ram {
     ram_access_duration : u32,
     ram_free:u32,

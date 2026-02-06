@@ -1,9 +1,10 @@
 mod task;
 mod sched;
 mod machine;
-mod dag;
+mod parser;
 
 use std::cell::RefCell;
+use serde::*;
 
 use crate::task::*;
 use crate::sched::Sched;
@@ -29,6 +30,11 @@ fn main() {
         ram: &mem,
         fpu: Fpu{ op_duration : 3, nb_of_fpu : 1},
     };
+
+    let serialized = serde_json::to_string(&cpu).unwrap();
+
+    // Prints serialized = {"x":1,"y":2}
+    println!("serialized = {}", serialized);
 
     let mut sched = Sched::new(vec![cpu,cpu2]);
 
