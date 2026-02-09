@@ -31,10 +31,10 @@ impl Cpu<'_> {
     }
 
     fn mem_access(&mut self, task:Task,time: u64) -> u64 {
-        if task.mem_count == 0 {return 0}
+        if task.mem_op_count == 0 {return 0}
         let mut total_time:u64 = 0;
-        let nb_miss = (task.mem_count as f32 * task.cache_miss) as u64;
-        total_time += self.cache.access_cache(task.mem_count-nb_miss,task.l1_cache_miss,task.l2_cache_miss,time);
+        let nb_miss = (task.mem_op_count as f64 * task.cache_miss) as u64;
+        total_time += self.cache.access_cache(task.mem_op_count-nb_miss,task.l1_cache_miss,task.l2_cache_miss,time);
         total_time += self.ram.borrow_mut().access_ram(nb_miss,time);
         total_time
     }
@@ -49,8 +49,8 @@ pub struct Alu {
 
 impl Alu {
     fn run_task(&self, task:Task) -> u64 {
-        if task.alu_count == 0 {return 0}
-        let nb_op = task.alu_count;
+        if task.alu_op_count == 0 {return 0}
+        let nb_op = task.alu_op_count;
         let time_until_end = (nb_op as u64 / self.nb_of_alu) / self.ops_per_cycle;
         time_until_end
     }
@@ -63,8 +63,8 @@ pub struct Fpu {
 
 impl Fpu {
     fn run_task(&self, task:Task) -> u64 {
-        if task.fpu_count == 0 {return 0}
-        let nb_op = task.fpu_count;
+        if task.fpu_op_count == 0 {return 0}
+        let nb_op = task.fpu_op_count;
         let time_until_end = (nb_op as u64 / self.nb_of_fpu) * self.op_duration;
         time_until_end
     }
@@ -107,9 +107,9 @@ pub struct Cache<'a> {
 }
 
 impl Cache<'_> {
-    fn access_cache(&self,nb_access:u64,l1_miss:f32,l2_miss:f32,time:u64) -> u64 {
-        let nb_l1_miss =  (l1_miss * nb_access as f32) as u64;
-        let nb_l3 = (l2_miss * nb_l1_miss as f32) as u64;
+    fn access_cache(&self,nb_access:u64,l1_miss:f64,l2_miss:f64,time:u64) -> u64 {
+        let nb_l1_miss =  (l1_miss * nb_access as f64) as u64;
+        let nb_l3 = (l2_miss * nb_l1_miss as f64) as u64;
         let nb_l2 = nb_l1_miss - nb_l3;
         let nb_l1 = nb_access - nb_l1_miss;
         self.l3.borrow_mut().access_l3(nb_l3,time) + (nb_l2 * self.l2_cache_access_duration) + (nb_l1 * self.l1_cache_access_duration) 

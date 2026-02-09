@@ -1,0 +1,22 @@
+{
+    "tasks" : [
+        {
+        "id" : "t1",
+        "mem_op_count" : 1000,
+        "alu_op_count" : 1000,
+        "fpu_op_count" : 0,
+        "cache_miss": 0.1,
+        "l1_cache_miss": 0.5,
+        "l2_cache_miss" : 0.1
+        },
+        {
+        "id" : "t2",
+        "mem_op_count" : 1000,
+        "alu_op_count" : 1000,
+        "fpu_op_count" : 0,
+        "cache_miss": 0.1,
+        "l1_cache_miss": 0.5,
+        "l2_cache_miss" : 0.1
+        }
+    ]
+}

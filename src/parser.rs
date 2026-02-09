@@ -1,5 +1,5 @@
 use serde_json::*;
-use crate::machine::*;
+use crate::{machine::*, task::Task};
 use std::{cell::RefCell};
 
 pub fn parse_ram(v:&Value) -> RefCell<Ram> {
@@ -42,4 +42,21 @@ pub fn parse<'a>(v:&'a Value,ram:&'a RefCell<Ram>,l3:&'a RefCell<L3>) -> Machine
     }
 
     Machine::new(cpus)
+}
+
+pub fn parse_tasks<'a>(v:&'a Value) -> Vec<Task<'a>> {
+    let err = "Error while parsing the tasks, see example-task.json";
+    let mut tasks = Vec::new();
+    for task in v["tasks"].as_array().expect(err) {
+        tasks.push(Task { 
+            id: task["id"].as_str().expect(err),
+            mem_op_count: task["mem_op_count"].as_u64().expect(err),
+            alu_op_count: task["alu_op_count"].as_u64().expect(err),
+            fpu_op_count: task["fpu_op_count"].as_u64().expect(err),
+            cache_miss: task["cache_miss"].as_f64().expect(err),
+            l1_cache_miss: task["l1_cache_miss"].as_f64().expect(err),
+            l2_cache_miss: task["l2_cache_miss"].as_f64().expect(err),
+        });
+    }
+    tasks
 }
