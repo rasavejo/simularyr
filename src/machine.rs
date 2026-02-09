@@ -1,9 +1,7 @@
 use std::{cell::RefCell, cmp::max};
 
 use crate::task::*;
-use serde::*;
 
-#[derive(Serialize, Deserialize, Debug)]
 pub struct Cpu<'a> {
     pub id: &'a str,
 
@@ -33,7 +31,6 @@ impl Cpu<'_> {
 
 }
 
-#[derive(Serialize, Deserialize, Debug)]
 pub struct Alu {
     pub ops_per_cycle : u32,
     pub nb_of_alu : u32,
@@ -109,7 +106,6 @@ impl Cache<'_> {
 }
 
 
-#[derive(Serialize, Deserialize, Debug)]
 pub struct Ram {
     ram_access_duration : u32,
     ram_free:u32,

@@ -1,13 +1,13 @@
 {
-  "cpu" : [
+  "cpu": [
     {
-      "id" : "cpu1",
-      "alu" : "10",
-      "cache" : "todo",
-      "frequency" : 1000000000
-    },
+      "id": "cpu1",
+      "alu": "10",
+      "cache": "todo",
+      "frequency": 1000000000
+    }
   ],
-  "ram" : {
-    "access_duration" : 10,
+  "ram": {
+    "access_duration": 10
   }
 }
