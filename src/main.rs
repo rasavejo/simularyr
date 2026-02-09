@@ -4,34 +4,22 @@ mod machine;
 mod parser;
 
 use parser::*;
-use std::cell::RefCell;
 use crate::task::*;
-use crate::sched::Sched;
-use crate::machine::*;
 // use crate::dag::*;
+
+
 fn main() {
+    let args: Vec<String> = std::env::args().collect();
+    let file_path = &args[1];
+    let contents = std::fs::read_to_string(file_path)
+    .expect("Should have been able to read the file");
+        let v: serde_json::Value = serde_json::from_str(&contents).unwrap();
 
-    let mem= RefCell::new(Ram::new(5));
-    let l3 = RefCell::new(L3::new(8000000, 64, 10));
+    let ram = parse_ram(&v);
+    let l3 = parse_l3(&v);
+    let mut machine = parse(&v,&ram,&l3);
 
-    let cpu = Cpu {
-        id: "1",
-        alu: Alu{ ops_per_cycle: 1, nb_of_alu : 1},
-        cache: Cache {l1_cache_access_duration: 1, l2_cache_access_duration: 3, l1_cache_size: 32000, l2_cache_size: 256000, l1_block_size:64,l2_block_size:64,l3:&l3},
-        ram: &mem,
-        fpu: Fpu{ op_duration : 3, nb_of_fpu : 1},
-    };
-
-    let cpu2 = Cpu {
-        id: "1",
-        alu: Alu{ ops_per_cycle: 1, nb_of_alu : 1},
-        cache: Cache {l1_cache_access_duration: 1, l2_cache_access_duration: 3, l1_cache_size: 32000, l2_cache_size: 256000, l1_block_size:64,l2_block_size:64,l3:&l3},
-        ram: &mem,
-        fpu: Fpu{ op_duration : 3, nb_of_fpu : 1},
-    };
-
-
-    let mut sched = Sched::new(vec![cpu,cpu2]);
+    println!("cpu 1 name : {}", v["cpu"][0]["id"]);
 
     let task2 = Task{
         id : "t2",
@@ -54,7 +42,5 @@ fn main() {
 
     let tasks : Vec<Task> = vec![task1,task2];
 
-    println!("{:?}",sched.schedule(tasks));
-    parse("example-machine.json");
-
+    println!("{:?}",machine.schedule(tasks));
 }

@@ -2,11 +2,36 @@
   "cpu": [
     {
       "id": "cpu1",
-      "alu": "10",
-      "cache": "todo",
-      "frequency": 1000000000
+      "alu_count": 1,
+      "fpu_count": 5,
+      "alu_ops_per_cycle": 1,
+      "fpu_op_duration": 3,
+      "l1_cache_size": 32000,
+      "l1_block_size": 64,
+      "l1_cache_access_duration": 1,
+      "l2_cache_size": 256000,
+      "l2_block_size": 64,
+      "l2_cache_access_duration": 3
+    },
+    {
+      "id": "cpu2",
+      "alu_count": 1,
+      "fpu_count": 5,
+      "alu_ops_per_cycle": 1,
+      "fpu_op_duration": 3,
+      "l1_cache_size": 32000,
+      "l1_block_size": 64,
+      "l1_cache_access_duration": 1,
+      "l2_cache_size": 256000,
+      "l2_block_size": 64,
+      "l2_cache_access_duration": 3
     }
   ],
+  "L3" : {
+    "l3_cache_size": 8000000,
+    "l3_block_size": 64,
+    "l3_cache_access_duration": 10
+    },
   "ram": {
     "access_duration": 10
   }
