@@ -10,9 +10,14 @@ use crate::task::*;
 
 fn main() {
     let args: Vec<String> = std::env::args().collect();
+
+    if args.len() != 3 {
+        panic!("USAGE : cargo run <machine desc json> <task desc json>");
+    }
+
     let file_path = &args[1];
     let contents = std::fs::read_to_string(file_path)
-    .expect("Should have been able to read the machine desc file");
+    .expect("Unable to read the machine desc file");
     let v: serde_json::Value = serde_json::from_str(&contents).unwrap();
 
     let ram = parse_ram(&v);
@@ -22,7 +27,7 @@ fn main() {
 
     let file_path = &args[2];
     let contents = std::fs::read_to_string(file_path)
-    .expect("Should have been able to read the task desc file");
+    .expect("Unable to read the task desc file");
     let v: serde_json::Value = serde_json::from_str(&contents).unwrap();
 
     let tasks : Vec<Task> = parse_tasks(&v);
