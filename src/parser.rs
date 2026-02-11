@@ -26,7 +26,7 @@ pub fn parse<'a>(v:&'a Value,ram:&'a RefCell<Ram>,l3:&'a RefCell<L3>) -> Machine
 
     for cpu in v["cpu"].as_array().expect(err) {
         cpus.push(Cpu { id: cpu["id"].as_str().expect(&format!("id missing : {err}")),
-            alu: Alu { ops_per_cycle: cpu["alu_ops_per_cycle"].as_u64().expect(&format!("alu_ops_per_cycle missing : {err}")),
+            alu: Alu { ops_per_cycle: {if let Some(ops) = cpu["alu_ops_per_cycle"].as_u64() {ops} else {1}},
                 nb_of_alu: cpu["alu_count"].as_u64().expect(&format!("alu_count missing : {err}"))},
             fpu: Fpu { op_duration: cpu["fpu_op_duration"].as_u64().expect(&format!("fpu_op_duration missing : {err}")), 
                 nb_of_fpu: cpu["fpu_count"].as_u64().expect(&format!("fpu_count missing : {err}"))},
@@ -50,12 +50,12 @@ pub fn parse_tasks<'a>(v:&'a Value) -> Vec<Task<'a>> {
     for task in v["tasks"].as_array().expect(err) {
         tasks.push(Task { 
             id: task["id"].as_str().expect(&format!("id missing : {err}")),
-            mem_op_count: task["mem_op_count"].as_u64().expect(&format!("mem_op_count missing : {err}")),
-            alu_op_count: task["alu_op_count"].as_u64().expect(&format!("alu_op_count missing : {err}")),
-            fpu_op_count: task["fpu_op_count"].as_u64().expect(&format!("fpu_op_count missing : {err}")),
-            cache_miss: task["cache_miss"].as_f64().expect(&format!("cache_miss (%) missing : {err}")),
-            l1_cache_miss: task["l1_cache_miss"].as_f64().expect(&format!("l1_cache_miss (%) missing : {err}")),
-            l2_cache_miss: task["l2_cache_miss"].as_f64().expect(&format!("l2_cache_miss (%) missing : {err}")),
+            mem_op_count: {if let Some(mem) = task["mem_op_count"].as_u64() {mem} else {0}},
+            alu_op_count: {if let Some(alu) = task["alu_op_count"].as_u64() {alu} else {0}},
+            fpu_op_count: {if let Some(fpu) = task["fpu_op_count"].as_u64() {fpu} else {0}},
+            cache_miss: task["cache_miss"].as_f64().expect(&format!("cache_miss (between 0.0 and 1.0) missing : {err}")),
+            l1_cache_miss: task["l1_cache_miss"].as_f64().expect(&format!("l1_cache_miss (between 0.0 and 1.0) missing : {err}")),
+            l2_cache_miss: task["l2_cache_miss"].as_f64().expect(&format!("l2_cache_miss (between 0.0 and 1.0) missing : {err}")),
         });
     }
     tasks
