@@ -23,14 +23,14 @@ pub struct Cpu<'a> {
 }
 
 impl Cpu<'_> {
-    pub fn run_task(&mut self, task:Task,time:u64) -> u64 {
+    pub fn run_task(&mut self, task:&Task,time:u64) -> u64 {
         let time_alu = self.alu.run_task(task);
         let time_mem = self.mem_access(task,time);
         let time_fpu = self.fpu.run_task(task);
         max(max(time_alu,time_mem),time_fpu)
     }
 
-    fn mem_access(&mut self, task:Task,time: u64) -> u64 {
+    fn mem_access(&mut self, task:&Task,time: u64) -> u64 {
         if task.mem_op_count == 0 {return 0}
         let mut total_time:u64 = 0;
         let nb_miss = (task.mem_op_count as f64 * task.cache_miss) as u64;
@@ -48,7 +48,7 @@ pub struct Alu {
 }
 
 impl Alu {
-    fn run_task(&self, task:Task) -> u64 {
+    fn run_task(&self, task:&Task) -> u64 {
         if task.alu_op_count == 0 {return 0}
         let nb_op = task.alu_op_count;
         let time_until_end = (nb_op as u64 / self.nb_of_alu) / self.ops_per_cycle;
@@ -62,7 +62,7 @@ pub struct Fpu {
 }
 
 impl Fpu {
-    fn run_task(&self, task:Task) -> u64 {
+    fn run_task(&self, task:&Task) -> u64 {
         if task.fpu_op_count == 0 {return 0}
         let nb_op = task.fpu_op_count;
         let time_until_end = (nb_op as u64 / self.nb_of_fpu) * self.op_duration;

@@ -48,8 +48,17 @@ pub fn parse_tasks<'a>(v:&'a Value) -> Vec<Task<'a>> {
     let err = "Error while parsing the tasks, see example-task.json";
     let mut tasks = Vec::new();
     for task in v["tasks"].as_array().expect(err) {
+        
         tasks.push(Task { 
             id: task["id"].as_str().expect(&format!("id missing : {err}")),
+            dep: {if let Some(dep) = task["dep"].as_array() {    
+                    let mut r = Vec::new();
+                    for value in dep {
+                        r.push(value.as_str().unwrap());
+                    }
+                    r
+                } else {Vec::new()}},
+            start_time: {if let Some(time) = task["start_time"].as_u64() {time} else {0}},            
             mem_op_count: {if let Some(mem) = task["mem_op_count"].as_u64() {mem} else {0}},
             alu_op_count: {if let Some(alu) = task["alu_op_count"].as_u64() {alu} else {0}},
             fpu_op_count: {if let Some(fpu) = task["fpu_op_count"].as_u64() {fpu} else {0}},

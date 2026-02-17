@@ -1,0 +1,14 @@
+{
+    "tasks" : [
+        {
+        "id" : "t1",
+        "start_time" : 1000,
+        "mem_op_count" : 1000,
+        "alu_op_count" : 1000,
+        "fpu_op_count" : 1000,
+        "cache_miss": 0.1,
+        "l1_cache_miss": 0.5,
+        "l2_cache_miss" : 0.1
+        }
+    ]
+}
