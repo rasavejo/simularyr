@@ -98,7 +98,8 @@ impl Machine<'_> {
 
             let end_time = self.cpus[next_cpu].run_task(&task,time);
             time_until_next_cpu[next_cpu] += end_time;
-            println!("finished task : {:?}",task.id);
+            println!("Finished task : {:?}, started at {:?} and ended at {:?}",task.id,time,time+end_time);
+            println!("Made {:?} alu op, {:?} fpu op and {:?} mem access",task.alu_op_count,task.fpu_op_count,task.mem_op_count);
 
             // We ran a task
 

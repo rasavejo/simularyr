@@ -19,7 +19,8 @@ pub struct Cpu<'a> {
     pub alu: Alu,
     pub fpu: Fpu,
     pub cache : Cache<'a>,
-    pub ram : &'a RefCell<Ram>
+    pub ram : &'a RefCell<Ram>,
+    pub nb_of_mem_bus: u64
 }
 
 impl Cpu<'_> {
@@ -36,7 +37,7 @@ impl Cpu<'_> {
         let nb_miss = (task.mem_op_count as f64 * task.cache_miss) as u64;
         total_time += self.cache.access_cache(task.mem_op_count-nb_miss,task.l1_cache_miss,task.l2_cache_miss,time);
         total_time += self.ram.borrow_mut().access_ram(nb_miss,time);
-        total_time
+        total_time/self.nb_of_mem_bus
     }
 
 
