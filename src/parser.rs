@@ -24,9 +24,9 @@ pub fn parse<'a>(v:&'a Value,ram:&'a RefCell<Ram>,l3:&'a RefCell<L3>) -> Machine
 
     let mut cpus: Vec<Cpu> = Vec::new();
 
-    for cpu in v["cpu"].as_array().expect(err) {
+    for cpu in v["cores"].as_array().expect(err) {
         cpus.push(Cpu { id: cpu["id"].as_str().expect(&format!("id missing : {err}")),
-            nb_of_mem_bus : {if let Some(bus) = cpu["nb_of_mem_bus"].as_u64() {bus} else {1}},
+            nb_of_mem_bus : {if let Some(bus) = cpu["mem_bus_count"].as_u64() {bus} else {1}},
             alu: Alu { ops_per_cycle: {if let Some(ops) = cpu["alu_ops_per_cycle"].as_u64() {ops} else {1}},
                 nb_of_alu: cpu["alu_count"].as_u64().expect(&format!("alu_count missing : {err}"))},
             fpu: Fpu { op_duration: cpu["fpu_op_duration"].as_u64().expect(&format!("fpu_op_duration missing : {err}")), 
@@ -52,7 +52,7 @@ pub fn parse_tasks<'a>(v:&'a Value) -> Vec<Task<'a>> {
         
         tasks.push(Task { 
             id: task["id"].as_str().expect(&format!("id missing : {err}")),
-            dep: {if let Some(dep) = task["dep"].as_array() {    
+            dep: {if let Some(dep) = task["dependancies"].as_array() {    
                     let mut r = Vec::new();
                     for value in dep {
                         r.push(value.as_str().unwrap());

@@ -11,7 +11,7 @@
         },
         {
         "id" : "t2",
-        "dep" : ["t1"],
+        "dependancies" : ["t1"],
         "mem_op_count" : 1000,
         "alu_op_count" : 1000,
         "cache_miss": 0.1,

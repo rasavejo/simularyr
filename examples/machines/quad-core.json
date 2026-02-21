@@ -1,5 +1,5 @@
 {
-  "cpu": [
+  "cores": [
     {
       "id": "cpu1",
       "alu_count": 1,

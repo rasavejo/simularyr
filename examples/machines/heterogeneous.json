@@ -1,5 +1,5 @@
 {
-  "cpu": [
+  "cores": [
     {
       "id": "cpu1",
       "alu_count": 20,
@@ -40,6 +40,7 @@
     },
     {
       "id": "cpu4",
+      "mem_bus_count" : 4,
       "alu_count": 1,
       "fpu_count": 1,
       "alu_ops_per_cycle": 1,
