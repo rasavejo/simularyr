@@ -4,6 +4,7 @@ use std::u64::MAX;
 use crate::task::*;
 use crate::machine::*;
 use std::collections::HashSet;
+use csv::WriterBuilder;
 
 
 impl Machine<'_> {
@@ -36,7 +37,8 @@ impl Machine<'_> {
     pub fn schedule(&mut self,tasks:&Vec<Task>) -> u64 {
         let mut time = 0;
 
-
+        let mut wrt = WriterBuilder::new().from_path("results.csv").unwrap();
+        wrt.write_record(&["ID","Start Time","End Time","Mem access","ALU op","FPU op"]).unwrap();
 
         //A map linking the id of a task to the time it can be started.
         //Is used in particular for dependancies
@@ -100,6 +102,7 @@ impl Machine<'_> {
             time_until_next_cpu[next_cpu] += end_time;
             println!("Finished task : {:?}, started at {:?} and ended at {:?}",task.id,time,time+end_time);
             println!("Made {:?} alu op, {:?} fpu op and {:?} mem access",task.alu_op_count,task.fpu_op_count,task.mem_op_count);
+            wrt.write_record(&[task.id,&time.to_string(),&(time+end_time).to_string(),&task.mem_op_count.to_string(),&task.alu_op_count.to_string(),&task.fpu_op_count.to_string()]).unwrap();
 
             // We ran a task
 
@@ -121,6 +124,7 @@ impl Machine<'_> {
             // we check the dependancies to add new tasks
 
         }
+        wrt.flush().unwrap();
         *time_until_next_cpu.iter().max().unwrap()
     }
 }
