@@ -19,8 +19,7 @@ pub struct Cpu<'a> {
     pub alu: Alu,
     pub fpu: Fpu,
     pub cache : Cache<'a>,
-    pub ram : &'a RefCell<Ram>,
-    pub nb_of_mem_bus: u64
+    pub ram : &'a RefCell<Ram>, //Ref Cell allows multiple core to share the same ram
 }
 
 impl Cpu<'_> {
@@ -37,7 +36,7 @@ impl Cpu<'_> {
         let nb_miss = (task.mem_op_count as f64 * task.cache_miss) as u64;
         total_time += self.cache.access_cache(task.mem_op_count-nb_miss,task.l1_cache_miss,task.l2_cache_miss,time);
         total_time += self.ram.borrow_mut().access_ram(nb_miss,time);
-        total_time/self.nb_of_mem_bus
+        total_time
     }
 
 
@@ -80,6 +79,9 @@ pub struct L3 {
 }
 
 impl L3 {
+
+    // Simulate concurrent access the same way as the RAM
+
     pub fn new(l3_cache_size:u64,l3_block_size:u64,l3_cache_access_duration:u64) -> L3 {
         L3 {l3_cache_size, l3_block_size, l3_cache_access_duration,cache_free:0}
     }
@@ -104,7 +106,7 @@ pub struct Cache<'a> {
     pub l2_cache_size : u64,
     pub l1_block_size : u64,
     pub l2_block_size : u64,
-    pub l3 : &'a RefCell<L3>
+    pub l3 : &'a RefCell<L3> //similar to ram
 }
 
 impl Cache<'_> {
@@ -120,22 +122,25 @@ impl Cache<'_> {
 
 pub struct Ram {
     ram_access_duration : u64,
+    nb_of_mem_bus : u64,
     ram_free:u64,
 }
 
 impl Ram {
-    pub fn new(ram_access_duration : u64) -> Ram {
-        Ram { ram_access_duration, ram_free: 0 }
+    pub fn new(ram_access_duration : u64, nb_of_mem_bus : u64) -> Ram {
+        Ram { ram_access_duration, nb_of_mem_bus, ram_free: 0 }
     }
 
     pub fn access_ram(&mut self,nb_access:u64,time:u64) -> u64 {
         let mut total_time = 0;
+        // If the ram is in use, we wait until it's free,
+        // then we adjust the duration of use
         if self.ram_free > time {
             total_time += self.ram_free - time;
         } else {
             self.ram_free = time;
         }
         self.ram_free += self.ram_access_duration * nb_access;
-        total_time + (self.ram_access_duration * nb_access)
+        (total_time + (self.ram_access_duration * nb_access)) / self.nb_of_mem_bus
     }
 }

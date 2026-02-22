@@ -4,8 +4,11 @@ use std::{cell::RefCell};
 
 pub fn parse_ram(v:&Value) -> RefCell<Ram> {
     let err = "Error while parsing the Ram, see example-machine.json";
-    let ram : Ram = Ram::new(v["ram"]["access_duration"]
-        .as_u64().expect(&format!("access_duration missing : {err}")));
+    let ram : Ram = Ram::new(
+        v["ram"]["access_duration"]
+        .as_u64().expect(&format!("access_duration missing : {err}")),
+        if let Some(bus) = v["ram"]["mem_bus_count"].as_u64() {bus} else {1}
+    );
     RefCell::new(ram)
 }
 
@@ -26,7 +29,6 @@ pub fn parse<'a>(v:&'a Value,ram:&'a RefCell<Ram>,l3:&'a RefCell<L3>) -> Machine
 
     for cpu in v["cores"].as_array().expect(err) {
         cpus.push(Cpu { id: cpu["id"].as_str().expect(&format!("id missing : {err}")),
-            nb_of_mem_bus : {if let Some(bus) = cpu["mem_bus_count"].as_u64() {bus} else {1}},
             alu: Alu { ops_per_cycle: {if let Some(ops) = cpu["alu_ops_per_cycle"].as_u64() {ops} else {1}},
                 nb_of_alu: cpu["alu_count"].as_u64().expect(&format!("alu_count missing : {err}"))},
             fpu: Fpu { op_duration: cpu["fpu_op_duration"].as_u64().expect(&format!("fpu_op_duration missing : {err}")), 
